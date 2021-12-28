@@ -1,0 +1,53 @@
+server:
+  port: 8081
+  
+spring:
+  application:
+    name: api-gateway 
+  cloud:
+    gateway:
+      routes:
+      #Mapping for admin
+      - id: admin-service
+        uri: http://localhost:8082/
+        predicates:
+        - Path=/admin/*
+#        filters:
+#        - name: CircuitBreaker
+#          args:
+#            name: admin-service 
+#            fallbackuri: forward:/adminFallback
+#      Mapping for customer
+      - id: admin-service
+        uri: http://localhost:8083/
+        predicates:
+        - Path=/customer/*
+#        filters:
+#        - name: CircuitBreaker
+#          args:
+#            name: customer-service 
+#            fallbackuri: forward:/customerFallback
+      #Mapping for order
+      - id: order-service
+        uri: http://localhost:8084/
+        predicates:
+        - Path=/order/*
+#        filters:
+#        - name: CircuitBreaker
+#          args:
+#            name: order-service 
+#            fallbackuri: forward:/orderFallback
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
